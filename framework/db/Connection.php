@@ -620,18 +620,18 @@ class Connection extends Component
             }
 
             if ($enableProfiling) {
-                Yii::beginProfile($token, __METHOD__);
+                $this->beginProfile($token, __METHOD__);
             }
 
             $this->pdo = $this->createPdoInstance();
             $this->initConnection();
 
             if ($enableProfiling) {
-                Yii::endProfile($token, __METHOD__);
+                $this->endProfile($token, __METHOD__);
             }
         } catch (\PDOException $e) {
             if ($enableProfiling) {
-                Yii::endProfile($token, __METHOD__);
+                $this->endProfile($token, __METHOD__);
             }
 
             throw new Exception($e->getMessage(), $e->errorInfo, (int) $e->getCode(), $e);
@@ -1242,5 +1242,29 @@ class Connection extends Component
             // reset PDO connection, unless its sqlite in-memory, which can only have one connection
             $this->pdo = null;
         }
+    }
+
+    /**
+     * Marks the beginning of a code block for profiling.
+     * {@see Yii::beginProfile()}
+     *
+     * @param string $token
+     * @param string $category
+     */
+    protected function beginProfile($token, $category)
+    {
+        Yii::beginProfile($token, $category);
+    }
+
+    /**
+     * Marks the end of a code block for profiling.
+     * {@see Yii::endProfile()}
+     *
+     * @param string $token
+     * @param string $category
+     */
+    protected function endProfile($token, $category)
+    {
+        Yii::endProfile($token, $category);
     }
 }
