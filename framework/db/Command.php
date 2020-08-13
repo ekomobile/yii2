@@ -1088,18 +1088,18 @@ class Command extends Component
         $this->prepare(false);
 
         try {
-            $profile and Yii::beginProfile($rawSql, __METHOD__);
+            $profile and $this->beginProfile($rawSql, __METHOD__);
 
             $this->internalExecute($rawSql);
             $n = $this->pdoStatement->rowCount();
 
-            $profile and Yii::endProfile($rawSql, __METHOD__);
+            $profile and $this->endProfile($rawSql, __METHOD__);
 
             $this->refreshTableSchema();
 
             return $n;
         } catch (Exception $e) {
-            $profile and Yii::endProfile($rawSql, __METHOD__);
+            $profile and $this->endProfile($rawSql, __METHOD__);
             throw $e;
         }
     }
@@ -1154,7 +1154,7 @@ class Command extends Component
         $this->prepare(true);
 
         try {
-            $profile and Yii::beginProfile($rawSql, 'yii\db\Command::query');
+            $profile and $this->beginProfile($rawSql, 'yii\db\Command::query');
 
             $this->internalExecute($rawSql);
 
@@ -1168,9 +1168,9 @@ class Command extends Component
                 $this->pdoStatement->closeCursor();
             }
 
-            $profile and Yii::endProfile($rawSql, 'yii\db\Command::query');
+            $profile and $this->endProfile($rawSql, 'yii\db\Command::query');
         } catch (Exception $e) {
-            $profile and Yii::endProfile($rawSql, 'yii\db\Command::query');
+            $profile and $this->endProfile($rawSql, 'yii\db\Command::query');
             throw $e;
         }
 
@@ -1316,5 +1316,29 @@ class Command extends Component
         $this->_refreshTableName = null;
         $this->_isolationLevel = false;
         $this->_retryHandler = null;
+    }
+
+    /**
+     * Marks the beginning of a code block for profiling.
+     * {@see Yii::beginProfile()}
+     *
+     * @param string $token    token for the code block
+     * @param string $category the category of a log message
+     */
+    protected function beginProfile($token, $category)
+    {
+        Yii::beginProfile($token, $category);
+    }
+
+    /**
+     * Marks the end of a code block for profiling.
+     * {@see Yii::endProfile()}
+     *
+     * @param string $token    token for the code block
+     * @param string $category the category of a log message
+     */
+    protected function endProfile($token, $category)
+    {
+        Yii::endProfile($token, $category);
     }
 }
